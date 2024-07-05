@@ -33,9 +33,12 @@ sprites.onOverlap(SpriteKind.Easy_enemy, SpriteKind.Projectile, function (sprite
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
             `, SpriteKind.upgrade)
-        upgrade.setPosition(otherSprite.x, otherSprite.y)
+        upgrade.setPosition(sprite.x, sprite.y)
     }
     sprites.destroy(sprite)
+})
+info.onCountdownEnd(function () {
+    sprites.destroy(super_straal_sprite)
 })
 statusbars.onZero(StatusBarKind.Health, function (status) {
     game.gameOver(false)
@@ -59,6 +62,7 @@ statusbars.onStatusReached(StatusBarKind.experience_upgrade, statusbars.StatusCo
         value.follow(heroe, 0)
     }
     controller.moveSprite(heroe, 0, 0)
+    controller.moveSprite(super_straal_sprite, 0, 0)
     while (!(controller.B.isPressed())) {
         game.setDialogCursor(img`
             ................22222..............
@@ -292,7 +296,33 @@ game.onUpdate(function () {
     fire_ball.x = heroe.x + Math.cos(current_angle_fire_ball) * distance_fireball
     fire_ball.y = heroe.y + Math.sin(current_angle_fire_ball) * distance_fireball
 })
-game.onUpdateInterval(5000, function () {
+game.onUpdateInterval(2000, function () {
+    if (snake_speed != 0) {
+        if (!(heroe.x > 730 && heroe.x < 870 && (heroe.y > 730 && heroe.y < 870))) {
+            enemy_snake = sprites.create(img`
+                . . . . c c c c c c . . . . . . 
+                . . . c 6 7 7 7 7 6 c . . . . . 
+                . . c 7 7 7 7 7 7 7 7 c . . . . 
+                . c 6 7 7 7 7 7 7 7 7 6 c . . . 
+                . c 7 c 6 6 6 6 c 7 7 7 c . . . 
+                . f 7 6 f 6 6 f 6 7 7 7 f . . . 
+                . f 7 7 7 7 7 7 7 7 7 7 f . . . 
+                . . f 7 7 7 7 6 c 7 7 6 f c . . 
+                . . . f c c c c 7 7 6 f 7 7 c . 
+                . . c 7 2 7 7 7 6 c f 7 7 7 7 c 
+                . c 7 7 2 7 7 c f c 6 7 7 6 c c 
+                c 1 1 1 1 7 6 f c c 6 6 6 c . . 
+                f 1 1 1 1 1 6 6 c 6 6 6 6 f . . 
+                f 6 1 1 1 1 1 6 6 6 6 6 c f . . 
+                . f 6 1 1 1 1 1 1 6 6 6 f . . . 
+                . . c c c c c c c c c f . . . . 
+                `, SpriteKind.Easy_enemy)
+            enemy_snake.setPosition(randint(0, 1600), randint(0, 1600))
+            enemy_snake.follow(heroe, snake_speed)
+        }
+    }
+})
+game.onUpdateInterval(20000, function () {
     if (super_straal == 1) {
         super_straal_sprite = sprites.create(img`
             ................22222..............
@@ -810,31 +840,6 @@ game.onUpdateInterval(5000, function () {
             `, SpriteKind.Projectile)
         super_straal_sprite.setPosition(heroe.x, heroe.y)
         controller.moveSprite(super_straal_sprite)
-    }
-})
-game.onUpdateInterval(2000, function () {
-    if (snake_speed != 0) {
-        if (!(heroe.x > 730 && heroe.x < 870 && (heroe.y > 730 && heroe.y < 870))) {
-            enemy_snake = sprites.create(img`
-                . . . . c c c c c c . . . . . . 
-                . . . c 6 7 7 7 7 6 c . . . . . 
-                . . c 7 7 7 7 7 7 7 7 c . . . . 
-                . c 6 7 7 7 7 7 7 7 7 6 c . . . 
-                . c 7 c 6 6 6 6 c 7 7 7 c . . . 
-                . f 7 6 f 6 6 f 6 7 7 7 f . . . 
-                . f 7 7 7 7 7 7 7 7 7 7 f . . . 
-                . . f 7 7 7 7 6 c 7 7 6 f c . . 
-                . . . f c c c c 7 7 6 f 7 7 c . 
-                . . c 7 2 7 7 7 6 c f 7 7 7 7 c 
-                . c 7 7 2 7 7 c f c 6 7 7 6 c c 
-                c 1 1 1 1 7 6 f c c 6 6 6 c . . 
-                f 1 1 1 1 1 6 6 c 6 6 6 6 f . . 
-                f 6 1 1 1 1 1 6 6 6 6 6 c f . . 
-                . f 6 1 1 1 1 1 1 6 6 6 f . . . 
-                . . c c c c c c c c c f . . . . 
-                `, SpriteKind.Easy_enemy)
-            enemy_snake.setPosition(randint(0, 1600), randint(0, 1600))
-            enemy_snake.follow(heroe, snake_speed)
-        }
+        info.startCountdown(3)
     }
 })
